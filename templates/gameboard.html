@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>{{ title }}</title>
+      <meta charset="UTF-8">
+      <meta http-equiv="x-ua-compatible" content="IE=Edge">
+      <meta name="viewport" content="width=device-width, user-scalable=no">
+      <meta name="apple-mobile-web-app-capable" content="yes">
+      <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+      <script src="/static/js/enchant.js-builds-0.8.0-fix/build/enchant.js"></script>
+      <script src ="/static/js/game.js"></script>
+      <script language="javascript">
+
+        var ws = new WebSocket("ws://192.168.1.126:8888/websocket/?Id={{username}}");
+        ws.onopen = function() {
+           /* ws.send("Hello, world"); */
+           console.log('Connection open!');
+        };
+        ws.onmessage = function (evt) {
+          console.log(evt.data);
+          $('.messages').append("<div>"+evt.data+"</div>");
+          /* to deserialize message 
+          var object = JSON.parse(e.data); */
+        };
+        
+        $( document ).ready(function() {
+          if(!window.console){ window.console = {log: function(){} }; } 
+            console.log("We're ready.");
+
+          $("#chatbox").keyup(function (e) {
+            if (e.keyCode == 13) {
+                sendMsg();
+            }
+          });
+
+        });
+
+        function sendMsg() {
+          msg = $('#chatbox').val();
+          $('#chatbox').val("");
+          data = {
+            user:"{{username}}",
+            msg: msg
+          }
+
+          ws.send(JSON.stringify(data));
+        }
+
+      </script>
+      <style>
+        #enchant-stage {
+          margin-top: 30px;
+          height: 480px;
+          width: 640px;
+
+        }
+        .chat {
+          background-color: black;
+          color: white;
+          margin-top: 10px;
+          border: 1px solid black;
+          width: 360px;
+          padding: 10px;
+          max-height: 120px;
+          input {
+            background-color: black;
+            color: white;
+          }
+        }
+      </style>
+   </head>
+   <body>
+      <div id="enchant-stage"></div>
+      <div class="chat">
+        <div>Welcome to the Melty Cave!</div>
+        <div class="messages">
+        </div>
+        <input type="text" id="chatbox"></input>
+      </div>
+   </body>
+ </html>
