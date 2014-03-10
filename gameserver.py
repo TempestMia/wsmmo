@@ -24,6 +24,8 @@ STATIC_ROOT = proj_root('..', 'static')
 
 usernames = []
 
+online_players = {}
+
 class MainHandler(tornado.web.RequestHandler):
     @tornado.web.asynchronous
     def get(self):
@@ -78,8 +80,16 @@ class PlayerWebSocket(tornado.websocket.WebSocketHandler):
       o = json.loads(message)
       print "Client %s received a message : %s" % (self.id, message)
       #self.write_message(u"You said: " + o['msg'])
-      for eid,ews in PlayerWebSocket.clients.items():
-        ews['object'].write_message("["+o['user']+"]: "+ o['msg'])
+      # Chat
+      if o['type'] == 'chat':
+        for eid,ews in PlayerWebSocket.clients.items():
+          #ews['object'].write_message("["+o['user']+"]: "+ o['msg'])
+          ews['object'].write_message(o);
+      # Player Update
+      if o['type'] == 'update':
+        for eid,ews in PlayerWebSocket.clients.items():
+          if eid != o['user']: # for all the websocket connections but the one to the user who updated
+            ews['object'].write_message(o)
 
   def on_close(self):
       if self.id in PlayerWebSocket.clients:

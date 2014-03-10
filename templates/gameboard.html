@@ -10,22 +10,31 @@
       <script src="/static/js/enchant.js-builds-0.8.0-fix/build/enchant.js"></script>
       <script src ="/static/js/game.js"></script>
       <script language="javascript">
+        var username = "{{username}}";
 
         var ws = new WebSocket("ws://192.168.1.126:8888/websocket/?Id={{username}}");
         ws.onopen = function() {
            /* ws.send("Hello, world"); */
+           $('#sys-msg').append("Connection open");
            console.log('Connection open!');
+           runGame();
         };
         ws.onmessage = function (evt) {
-          console.log(evt.data);
-          $('.messages').append("<div>"+evt.data+"</div>");
-          /* to deserialize message 
-          var object = JSON.parse(e.data); */
+          var message = JSON.parse(evt.data);
+          if(message['type'] == 'chat') {
+            console.log(message['msg']);
+            $('.messages').append("<div>"+message['user']+": "+message['msg']+"</div>");
+          }
+          if(message['type'] == 'update') {
+            console.log(message['user']+" is trying to send us their update!");
+            /* write some function to create/update other player's toon */
+            updatePlayer(message);
+          }
         };
         
         $( document ).ready(function() {
           if(!window.console){ window.console = {log: function(){} }; } 
-            console.log("We're ready.");
+            console.log("We're in onready.");
 
           $("#chatbox").keyup(function (e) {
             if (e.keyCode == 13) {
@@ -39,6 +48,7 @@
           msg = $('#chatbox').val();
           $('#chatbox').val("");
           data = {
+            type: "chat",
             user:"{{username}}",
             msg: msg
           }
@@ -49,30 +59,40 @@
       </script>
       <style>
         #enchant-stage {
-          margin-top: 30px;
-          height: 480px;
-          width: 640px;
-
+          height: 512px;
+          width: 960px;
+          margin: 10px auto 0;
         }
         .chat {
           background-color: black;
           color: white;
-          margin-top: 10px;
-          border: 1px solid black;
-          width: 360px;
-          padding: 10px;
-          max-height: 120px;
-          input {
+          margin: 0px auto;
+          width: 960px;
+          height: 120px;
+          position: relative;
+        }
+        .system-msg-box {
+          color: yellow;
+          padding: 5px 5px;
+        }
+        .messages {
+
+        }
+        #chatbox {
             background-color: black;
             color: white;
-          }
+            position: absolute;
+            bottom: 0px;
+            left: 0px;
+            border: 1px solid purple;
+            width: 958px;
         }
       </style>
    </head>
    <body>
       <div id="enchant-stage"></div>
       <div class="chat">
-        <div>Welcome to the Melty Cave!</div>
+        <div class="system-msg-box"><span>System Message: </span><span id="sys-msg"></span></div>
         <div class="messages">
         </div>
         <input type="text" id="chatbox"></input>
