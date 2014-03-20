@@ -8,10 +8,12 @@
       <meta name="apple-mobile-web-app-capable" content="yes">
       <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
       <script src="/static/js/enchant.js-builds-0.8.0-fix/build/enchant.js"></script>
+      <script src="/static/js/base.js"></script>
       <script src ="/static/js/game.js"></script>
       <script language="javascript">
         var username = "{{username}}";
 
+        /*var ws = new WebSocket("ws://localhost:8888/websocket/?Id={{username}}");*/
         var ws = new WebSocket("ws://192.168.1.126:8888/websocket/?Id={{username}}");
         ws.onopen = function() {
            /* ws.send("Hello, world"); */

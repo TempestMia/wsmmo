@@ -67,7 +67,7 @@ class MyFormHandler(tornado.web.RequestHandler):
       self.write("You wrote " + self.get_argument("message"))
 
 class PlayerWebSocket(tornado.websocket.WebSocketHandler):
-  # we gonna store clients in dictionary..
+  # To store clients
   clients = dict()
 
   def open(self):
@@ -97,6 +97,7 @@ class PlayerWebSocket(tornado.websocket.WebSocketHandler):
       print "WebSocket closed"
 
 class NoCacheStaticFileHandler(tornado.web.StaticFileHandler):
+  # Not currently in use but I put this here in case it comes in handy
   def set_extra_headers(self, path):
     self.set_header("Cache-control", "no-cache")
 

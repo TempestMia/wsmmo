@@ -58,7 +58,8 @@ function runGame() {
     //Preload images
     //Any resources not preloaded will not appear
     game.preload(en_imgs+'female-warrior30px.png',en_imgs+'icon0.png', en_imgs+'diamond-sheet.png', 
-                en_imgs+'bg.png', en_imgs+'fireball16.png', en_imgs+'cavemap.png', en_imgs+'rogue30px.png');
+                en_imgs+'bg.png', en_imgs+'fireball16.png', en_imgs+'cavemap.png', en_imgs+'rogue30px.png',
+                en_imgs+'townfolk1_f.png');
 
     game.onload = function () {
       //Prepares the game
@@ -131,6 +132,22 @@ function runGame() {
                 game.rootScene.addChild(bomb);
             }
         });*/
+
+        /* Creating an NPC Class using Base */
+        var NPC = enchant.Class.create(enchant.Sprite, {
+            initialize: function(name, width, height, posx, posy, frame, imgicon){
+                this.name = name;
+                enchant.Sprite.call(this, width, height);
+                this.x = posx;
+                this.y = posy;
+                this.frame = frame;
+                this.image = game.assets[en_imgs+imgicon]; /* need to be in game loaded to see img*/
+                /*this.frame = 5;*/
+            }
+        });
+
+        oldwoman = new NPC('Old Woman', 32, 32, 540, 100, 40, 'townfolk1_f.png');
+
         game.pushScene(game.makeEntryScene());
     };
     game.start();
@@ -182,6 +199,7 @@ function runGame() {
 
         sceneEntry.addChild(map);
         sceneEntry.addChild(player);
+        sceneEntry.addChild(oldwoman);
         sendPlayer(player);
 
         player.addEventListener(Event.ENTER_FRAME, function() {
@@ -262,6 +280,9 @@ function runGame() {
             //04 Mouse Variables
             /*this.tx = this.x;
             this.ty = this.y;*/
+
+            /* update the server that we have a new player */
+            sendPlayer(this);
         },
 
         onenterframe: function() {
@@ -384,5 +405,6 @@ function runGame() {
         }
 
     });
+
 
 }
