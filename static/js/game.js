@@ -51,6 +51,23 @@ function updatePlayer(message) {
   }
 }
 
+limitcalls = 0;
+
+function setLimitcalls() {
+    limitcalls = 0;
+}
+
+function npcMessage(name, message) {
+    setTimeout(setLimitcalls(), 3000);
+    if(limitcalls == 0){
+        $('.messages').append("<div class='npc-msg'>"+name+": "+message+"</div>");
+        limitcalls = 1;
+    }
+    else {
+        setTimeout(setLimitcalls(), 3000);
+    }
+}
+
 //Begin game code
 function runGame() {
     var game = new Game(stgWidth, stgHeight);
@@ -135,18 +152,31 @@ function runGame() {
 
         /* Creating an NPC Class using Base */
         var NPC = enchant.Class.create(enchant.Sprite, {
-            initialize: function(name, width, height, posx, posy, frame, imgicon){
+            initialize: function(name, width, height, posx, posy, frame, imgicon, message){
                 this.name = name;
                 enchant.Sprite.call(this, width, height);
                 this.x = posx;
                 this.y = posy;
                 this.frame = frame;
                 this.image = game.assets[en_imgs+imgicon]; /* need to be in game loaded to see img*/
+                this.message = message
                 /*this.frame = 5;*/
+            },
+
+            onenterframe: function() {
+                if(this.within(player, 30) && game.input.E){
+                    /* send message - need delay or it repeats */
+                    setTimeout(npcMessage(this.name, this.message), 2500);
+                }
             }
         });
 
-        oldwoman = new NPC('Old Woman', 32, 32, 540, 100, 40, 'townfolk1_f.png');
+        oldwoman = new NPC('Old Woman', 32, 32, 540, 100, 40, 'townfolk1_f.png', 'The Firelord dwells here, adventurer.');
+
+        /* add interaction functionality 
+          NPC: 
+          - Will publish message to chat
+          - Will respond to chat contents */
 
         game.pushScene(game.makeEntryScene());
     };
@@ -276,6 +306,7 @@ function runGame() {
             game.keybind(68, 'right');
             game.keybind(87, 'up');
             game.keybind(83, 'down');
+            game.keybind(69, 'E');
           
             //04 Mouse Variables
             /*this.tx = this.x;

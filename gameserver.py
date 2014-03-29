@@ -2,6 +2,8 @@
 import sys
 import os
 
+import socket
+
 import tornado.ioloop
 import tornado.web
 
@@ -35,12 +37,14 @@ class MainHandler(tornado.web.RequestHandler):
 class GameBoardHandler(tornado.web.RequestHandler):
     @tornado.web.asynchronous
     def get(self, username):
-        self.render("templates/gameboard.html", title="Game Board", username=username)
+      ip = socket.gethostbyname(socket.gethostname())
+      self.render("templates/gameboard.html", title="Game Board", username=username, ip=ip)
 
 class UsernamePickHandler(tornado.web.RequestHandler):
     @tornado.web.asynchronous
     def get(self):
         self.render("templates/index.html", title="Welcome!")
+
     def post(self):
       self.set_header("Content-Type", "text/plain")
       username = self.get_argument("username")
