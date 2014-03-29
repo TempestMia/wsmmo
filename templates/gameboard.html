@@ -13,8 +13,9 @@
       <script language="javascript">
         var username = "{{username}}";
 
-        /*var ws = new WebSocket("ws://localhost:8888/websocket/?Id={{username}}");*/
-        var ws = new WebSocket("ws://192.168.1.126:8888/websocket/?Id={{username}}");
+        var ws = new WebSocket("ws://{{ ip }}:8888/websocket/?Id={{username}}");
+        /*var ws = new WebSocket("ws://192.168.1.102:8888/websocket/?Id={{username}}");*/
+
         ws.onopen = function() {
            /* ws.send("Hello, world"); */
            $('#sys-msg').append("Connection open");
@@ -36,7 +37,6 @@
         
         $( document ).ready(function() {
           if(!window.console){ window.console = {log: function(){} }; } 
-            console.log("We're in onready.");
 
           $("#chatbox").keyup(function (e) {
             if (e.keyCode == 13) {
@@ -78,7 +78,8 @@
           padding: 5px 5px;
         }
         .messages {
-
+          font-size: 14px;
+          margin: 2px 5px;
         }
         #chatbox {
             background-color: black;
